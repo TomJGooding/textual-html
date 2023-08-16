@@ -15,7 +15,7 @@ class HTML(Widget):
 
     def __init__(
         self,
-        html: str,
+        html: str | None = None,
         readability: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -27,8 +27,15 @@ class HTML(Widget):
         self._readability = readability
 
     def compose(self) -> ComposeResult:
-        markdown = self._convert_html_to_markdown(self._html)
-        yield Markdown(markdown)
+        yield Markdown()
+
+    def on_mount(self) -> None:
+        if self._html is not None:
+            self.update(self._html)
+
+    def update(self, html: str) -> None:
+        markdown = self._convert_html_to_markdown(html)
+        self.query_one(Markdown).update(markdown)
 
     def _convert_html_to_markdown(self, html: str) -> str:
         if self._readability is True:
