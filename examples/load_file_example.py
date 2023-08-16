@@ -1,10 +1,10 @@
-import requests
+from pathlib import Path
+
 from textual.app import App, ComposeResult
 
 from textual_html import HTML
 
-# URL = "https://blog.mozilla.org/en/products/firefox/reader-view/"
-URL = "http://example.com/"
+EXAMPLE_PATH = Path(__file__).parent / "./example.html"
 
 
 class ExampleApp(App):
@@ -12,8 +12,7 @@ class ExampleApp(App):
         yield HTML()
 
     def on_mount(self) -> None:
-        req = requests.get(URL)
-        self.query_one(HTML).update(req.text)
+        self.query_one(HTML).load(EXAMPLE_PATH)
 
 
 if __name__ == "__main__":
