@@ -8,16 +8,14 @@ URL = "http://example.com/"
 
 
 class ExampleApp(App):
-    def __init__(self, html: str):
-        super().__init__()
-        self.html = html
-
     def compose(self) -> ComposeResult:
-        yield HTML(self.html)
+        yield HTML()
+
+    def on_mount(self) -> None:
+        req = requests.get(URL)
+        self.query_one(HTML).update(req.text)
 
 
 if __name__ == "__main__":
-    req = requests.get(URL)
-    html = req.text
-    app = ExampleApp(html)
+    app = ExampleApp()
     app.run()
