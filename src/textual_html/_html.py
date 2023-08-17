@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from httpx import URL, AsyncClient
-from markdownify import markdownify
-from readabilipy import simple_json_from_html_string
+import httpx
+from markdownify import markdownify  # type: ignore[import]
+from readabilipy import simple_json_from_html_string  # type: ignore[import]
 from textual import work
 from textual.app import ComposeResult
 from textual.widget import Widget
@@ -41,25 +41,25 @@ class HTML(Widget):
         markdown = self._convert_html_to_markdown(html)
         self.query_one(Markdown).update(markdown)
 
-    def load(self, location: Path | URL) -> None:
+    def load(self, location: Path | httpx.URL) -> None:
         if isinstance(location, Path):
-            self._local_load(location)
-        elif isinstance(location, URL):
-            self._remote_load(location)
+            self._load_file(location)
+        elif isinstance(location, httpx.URL):
+            self._load_url(location)
         else:
             raise ValueError("Unknown location type")
 
     @work(exclusive=True)
-    async def _local_load(self, location: Path) -> None:
+    async def _load_file(self, location: Path) -> None:
         # TODO: Handle exceptions
         with open(location, "r") as f:
             contents = f.read()
         self.update(contents)
 
     @work(exclusive=True)
-    async def _remote_load(self, location: URL) -> None:
+    async def _load_url(self, location: httpx.URL) -> None:
         # TODO: Handle exceptions
-        async with AsyncClient() as client:
+        async with httpx.AsyncClient() as client:
             resp = await client.get(location)
             self.update(resp.text)
 
