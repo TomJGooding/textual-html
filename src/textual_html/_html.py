@@ -20,7 +20,7 @@ class HTML(Widget):
     def __init__(
         self,
         html: str | None = None,
-        readability: bool = True,
+        use_readability: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -28,7 +28,7 @@ class HTML(Widget):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._html = html
-        self._readability = readability
+        self._use_readability = use_readability
 
     def compose(self) -> ComposeResult:
         yield Markdown()
@@ -64,10 +64,15 @@ class HTML(Widget):
             self.update(resp.text)
 
     def _convert_html_to_markdown(self, html: str) -> str:
-        if self._readability is True:
-            html_content = simple_json_from_html_string(html)["plain_content"]
+        if self._use_readability is True:
+            html_data = simple_json_from_html_string(html, use_readability=True)
+            html_title = html_data["title"]
+            html_content = html_data["content"]
         else:
+            html_title = None
             html_content = html
         markdown = markdownify(html_content)
+        if html_title is not None:
+            markdown = f"# {html_title}" + markdown
         assert isinstance(markdown, str)
         return markdown

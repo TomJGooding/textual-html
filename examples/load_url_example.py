@@ -3,13 +3,13 @@ from textual.app import App, ComposeResult
 
 from textual_html import HTML
 
-# URL = "https://blog.mozilla.org/en/products/firefox/reader-view/"
 EXAMPLE_URL = URL("http://example.com/")
+# EXAMPLE_URL = URL("https://blog.mozilla.org/en/products/firefox/reader-view/")
 
 
 class ExampleApp(App):
     def compose(self) -> ComposeResult:
-        yield HTML()
+        yield HTML(use_readability=True)
 
     def on_mount(self) -> None:
         self.query_one(HTML).load(EXAMPLE_URL)
