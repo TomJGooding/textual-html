@@ -5,7 +5,8 @@ from textual_html import HTML
 EXAMPLE_HTML = """
 <h1>This is a heading</h1>
 <p>This is a paragraph.</p>
-<p>This is another paragraph.</p>
+<p><b>This text is bold.</b></p>
+<p><a href="https://www.w3schools.com">This is a link</a></p>
 """
 
 
