@@ -73,6 +73,6 @@ class HTML(Widget):
             html_content = html
         markdown = markdownify(html_content)
         if html_title is not None:
-            markdown = f"# {html_title}" + markdown
+            markdown = f"# {html_title}\n\n" + markdown
         assert isinstance(markdown, str)
         return markdown
