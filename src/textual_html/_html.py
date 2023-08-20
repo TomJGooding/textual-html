@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import httpx
@@ -5,6 +7,7 @@ from markdownify import markdownify  # type: ignore[import]
 from readabilipy import simple_json_from_html_string  # type: ignore[import]
 from textual import work
 from textual.app import ComposeResult
+from textual.message import Message
 from textual.widget import Widget
 from textual.widgets import Markdown
 
@@ -29,6 +32,16 @@ class HTML(Widget):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._html = html
         self._use_readability = use_readability
+
+    class LinkClicked(Message, bubble=True):
+        def __init__(self, html: HTML, href: str) -> None:
+            super().__init__()
+            self.html: HTML = html
+            self.href: str = href
+
+        @property
+        def control(self) -> HTML:
+            return self.html
 
     def compose(self) -> ComposeResult:
         yield Markdown()
@@ -74,3 +87,7 @@ class HTML(Widget):
             markdown = f"# {html_title}\n\n" + markdown
         assert isinstance(markdown, str)
         return markdown
+
+    def _on_markdown_link_clicked(self, event: Markdown.LinkClicked) -> None:
+        event.stop()
+        self.post_message(HTML.LinkClicked(self, event.href))
