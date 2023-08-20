@@ -12,7 +12,7 @@ class ExampleApp(App):
         yield HTML()
 
     def on_mount(self) -> None:
-        self.query_one(HTML).load(EXAMPLE_PATH)
+        self.query_one(HTML).load_file(EXAMPLE_PATH)
 
 
 if __name__ == "__main__":

@@ -41,26 +41,24 @@ class HTML(Widget):
         markdown = self._convert_html_to_markdown(html)
         self.query_one(Markdown).update(markdown)
 
-    def load(self, location: Path | httpx.URL) -> None:
-        if isinstance(location, Path):
-            self._load_file(location)
-        elif isinstance(location, httpx.URL):
-            self._load_url(location)
-        else:
-            raise ValueError("Unknown location type")
+    def load_file(self, path: Path) -> None:
+        self._load_file(path)
+
+    def load_url(self, url: str) -> None:
+        self._load_url(httpx.URL(url))
 
     @work(exclusive=True)
-    async def _load_file(self, location: Path) -> None:
+    async def _load_file(self, path: Path) -> None:
         # TODO: Handle exceptions
-        with open(location, "r") as f:
+        with open(path, "r") as f:
             contents = f.read()
         self.update(contents)
 
     @work(exclusive=True)
-    async def _load_url(self, location: httpx.URL) -> None:
+    async def _load_url(self, url: httpx.URL) -> None:
         # TODO: Handle exceptions
         async with httpx.AsyncClient() as client:
-            resp = await client.get(location)
+            resp = await client.get(url)
             self.update(resp.text)
 
     def _convert_html_to_markdown(self, html: str) -> str:
